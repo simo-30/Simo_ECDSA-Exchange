@@ -1,6 +1,10 @@
 import "./index.scss";
 
 const server = "http://localhost:3042";
+const EC = require('elliptic').ec;
+const SHA256 = require("crypto-js/SHA256");
+
+const ec = new EC('secp256k1');
 
 document.getElementById("exchange-address").addEventListener('input', ({ target: {value} }) => {
   if(value === "") {
@@ -16,12 +20,23 @@ document.getElementById("exchange-address").addEventListener('input', ({ target:
 });
 
 document.getElementById("transfer-amount").addEventListener('click', () => {
-  const sender = document.getElementById("exchange-address").value;
+  //const sender = document.getElementById("exchange-address").value;
   const amount = document.getElementById("send-amount").value;
+  const privateKey = document.getElementById("private-key").value;
   const recipient = document.getElementById("recipient").value;
+  
+  const tx = {
+	  amount, recipient
+  }
+  
+  const key = ec.keyFromPrivate(privateKey, "hex");
+  
+  const publicKey = key.getPublic().encode("hex")):
+  
+  const sig = key.sign(SHA256(JSON.stringify(tx)).toString());
 
   const body = JSON.stringify({
-    sender, amount, recipient
+    tx, sig, publicKey
   });
 
   const request = new Request(`${server}/send`, { method: 'POST', body });
