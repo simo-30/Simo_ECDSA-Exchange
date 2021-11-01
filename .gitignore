@@ -1,5 +1,8 @@
 dist
 .cache
 !.gitignore
+node_modules
 .parcel-cache
 *.lock
+ECDSA-Signature-master
+package-lock.json

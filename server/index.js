@@ -8,10 +8,24 @@ const port = 3042;
 app.use(cors());
 app.use(express.json());
 
-const balances = {
-  "1": 100,
-  "2": 50,
-  "3": 75,
+/*
+generate addresses
+*/
+const EC = require('elliptic').ec;
+const ec = new EC('secp256k1');
+
+const balances = {}
+
+console.log('------ START SERVER ------');
+
+for (let i=0; i<3; i++) {
+	const key = ec.genKeyPair();
+	const publicKey = key.getPublic().encode('hex');
+	
+	balances[publicKey] = 100*(i+1);
+	
+	console.log('Public key ' + publicKey + ' -> ' + balances[publicKey]);
+	console.log('with private key ' + key.getPrivate().toString(16) + '\n');
 }
 
 app.get('/balance/:address', (req, res) => {
